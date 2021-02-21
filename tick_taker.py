@@ -128,10 +128,13 @@ def run(args):
     qc = 'Q.%s' % symbol
     tc = 'T.%s' % symbol
     position = Position()
-
+    # gargi 1
+    opts['data_stream']='polygon'
+    opts['data_url'] = 'https://data.alpaca.markets'
+    # gargi 1
     # Establish streaming connection
     conn = tradeapi.StreamConn(**opts)
-
+    #print(conn)
     # Define our message handling
     @conn.on(r'Q$')
     async def on_quote(conn, channel, data):
@@ -141,6 +144,7 @@ def run(args):
     @conn.on(r'T$')
     async def on_trade(conn, channel, data):
         if quote.traded:
+            #print('quote traded')
             return
         # We've received a trade and might be ready to follow it
         if (
@@ -168,11 +172,11 @@ def run(args):
                 try:
                     o = api.submit_order(
                         symbol=symbol, qty='100', side='buy',
-                        type='limit', time_in_force='day',
+                        type='limit', time_in_force='ioc',
                         limit_price=str(quote.ask)
                     )
                     # Approximate an IOC order by immediately cancelling
-                    api.cancel_order(o.id)
+                    #api.cancel_order(o.id)
                     position.update_pending_buy_shares(100)
                     position.orders_filled_amount[o.id] = 0
                     print('Buy at', quote.ask, flush=True)
@@ -190,11 +194,11 @@ def run(args):
                 try:
                     o = api.submit_order(
                         symbol=symbol, qty='100', side='sell',
-                        type='limit', time_in_force='day',
+                        type='limit', time_in_force='ioc',
                         limit_price=str(quote.bid)
                     )
                     # Approximate an IOC order by immediately cancelling
-                    api.cancel_order(o.id)
+                    #api.cancel_order(o.id)
                     position.update_pending_sell_shares(100)
                     position.orders_filled_amount[o.id] = 0
                     print('Sell at', quote.bid, flush=True)
@@ -237,7 +241,7 @@ def run(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--symbol', type=str, default='SNAP',
+        '--symbol', type=str, default='INTC',
         help='Symbol you want to trade.'
     )
     parser.add_argument(
@@ -245,15 +249,15 @@ if __name__ == '__main__':
         help='Maximum number of shares to hold at once. Minimum 100.'
     )
     parser.add_argument(
-        '--key-id', type=str, default=None,
+        '--key-id', type=str, default='PKUTQ10LCEM7HDRD7484',
         help='API key ID',
     )
     parser.add_argument(
-        '--secret-key', type=str, default=None,
+        '--secret-key', type=str, default='0mZpOWExFK4RKeVnMglQ9ESp1FvA4ZGdmPxVoNM4',
         help='API secret key',
     )
     parser.add_argument(
-        '--base-url', type=str, default=None,
+        '--base-url', type=str, default='https://paper-api.alpaca.markets',
         help='set https://paper-api.alpaca.markets if paper trading',
     )
     args = parser.parse_args()
