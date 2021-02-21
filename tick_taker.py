@@ -249,11 +249,11 @@ if __name__ == '__main__':
         help='Maximum number of shares to hold at once. Minimum 100.'
     )
     parser.add_argument(
-        '--key-id', type=str, default='PKUTQ10LCEM7HDRD7484',
+        '--key-id', type=str, default='PKSA6CFW8PBVD2AIJ3DF',
         help='API key ID',
     )
     parser.add_argument(
-        '--secret-key', type=str, default='0mZpOWExFK4RKeVnMglQ9ESp1FvA4ZGdmPxVoNM4',
+        '--secret-key', type=str, default='Y2e5AJ4VIrW5j7JPYUr7ac3fkSsb25qJkPvjCIFb',
         help='API secret key',
     )
     parser.add_argument(
